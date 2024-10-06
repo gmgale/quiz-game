@@ -7,6 +7,10 @@ import (
 	"net/http"
 )
 
+var (
+	gameSessions = make(map[string]*GameSession)
+)
+
 // Server implements the ServerInterface from api.gen.go
 type Server struct{}
 
