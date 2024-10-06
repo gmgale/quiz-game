@@ -9,6 +9,7 @@ encoder.ts
 git_push.sh
 index.ts
 model/answer.ts
+model/answerResponse.ts
 model/gameSession.ts
 model/gamesGameIdPlayersPostRequest.ts
 model/leaderboardEntry.ts
