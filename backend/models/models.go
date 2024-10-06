@@ -1,5 +1,4 @@
-// backend/models.go
-package main
+package models
 
 import (
 	"time"

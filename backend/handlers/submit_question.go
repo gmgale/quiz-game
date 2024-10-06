@@ -2,12 +2,13 @@ package handlers
 
 import (
 	api "github.com/gmgale/quiz-game/backend/gen"
+	"github.com/gmgale/quiz-game/backend/models"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
 // PostGamesGameIdAnswers handles answer submission
-func (s *Server) PostGamesGameIdAnswers(ctx echo.Context, gameId string) error {
+func PostGamesGameIdAnswers(ctx echo.Context, gameId string, gameSessions map[string]*models.GameSession) error {
 	var answer api.Answer
 	if err := ctx.Bind(&answer); err != nil {
 		return ctx.JSON(http.StatusBadRequest, err.Error())
@@ -24,7 +25,7 @@ func (s *Server) PostGamesGameIdAnswers(ctx echo.Context, gameId string) error {
 	}
 
 	// Record the answer
-	ans := &Answer{
+	ans := &models.Answer{
 		PlayerID:       *answer.PlayerId,
 		QuestionID:     *answer.QuestionId,
 		SelectedOption: int(*answer.SelectedOption),
@@ -44,8 +45,8 @@ func (s *Server) PostGamesGameIdAnswers(ctx echo.Context, gameId string) error {
 	}
 
 	return ctx.JSON(http.StatusOK, api.AnswerResponse{
-		Correct:       &correct,
-		CorrectOption: &currentQuestion.Answer,
-		ScoreAwarded:  &scoreAwarded,
+		Correct:       ptrBool(correct),
+		CorrectOption: ptrInt(currentQuestion.Answer),
+		ScoreAwarded:  ptrInt(scoreAwarded),
 	})
 }

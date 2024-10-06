@@ -2,6 +2,7 @@ package handlers
 
 import (
 	api "github.com/gmgale/quiz-game/backend/gen"
+	"github.com/gmgale/quiz-game/backend/models"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 )
 
 // PostGamesGameIdPlayers handles a player joining a game session
-func (s *Server) PostGamesGameIdPlayers(ctx echo.Context, gameId string) error {
+func PostGamesGameIdPlayers(ctx echo.Context, gameId string, gameSessions map[string]*models.GameSession) error {
 	var req struct {
 		Name string `json:"name"`
 	}
@@ -23,7 +24,7 @@ func (s *Server) PostGamesGameIdPlayers(ctx echo.Context, gameId string) error {
 	}
 
 	playerID := uuid.New().String()
-	player := &Player{
+	player := &models.Player{
 		ID:       playerID,
 		Name:     req.Name,
 		Score:    0,
@@ -32,9 +33,9 @@ func (s *Server) PostGamesGameIdPlayers(ctx echo.Context, gameId string) error {
 	gameSession.Players[playerID] = player
 
 	return ctx.JSON(http.StatusOK, api.Player{
-		Id:       &player.ID,
-		Name:     &player.Name,
-		Score:    &player.Score,
+		Id:       ptrString(player.ID),
+		Name:     ptrString(player.Name),
+		Score:    ptrInt(player.Score),
 		JoinedAt: ptrTime(player.JoinedAt),
 	})
 }

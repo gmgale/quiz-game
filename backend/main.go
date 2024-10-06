@@ -2,53 +2,58 @@ package main
 
 import (
 	api "github.com/gmgale/quiz-game/backend/gen"
+	"github.com/gmgale/quiz-game/backend/handlers"
+	"github.com/gmgale/quiz-game/backend/models"
 	"github.com/labstack/echo/v4"
 	"log"
-	"net/http"
 )
 
-var (
-	gameSessions = make(map[string]*GameSession)
-)
-
-// Server implements the ServerInterface from api.gen.go
-type Server struct{}
+type Server struct {
+	GameSessions map[string]*models.GameSession
+}
 
 // PostGames handles the creation of a new game session
 func (s *Server) PostGames(ctx echo.Context) error {
-	// Implement your logic here
-	return ctx.JSON(http.StatusCreated, api.GameSession{
-		Id:     ptrString("game-session-id"),
-		Status: ptrGameSessionStatus(api.Waiting),
-	})
+	return handlers.PostGames(ctx, s.GameSessions)
 }
 
 // PostGamesGameIdPlayers handles a player joining a game session
 func (s *Server) PostGamesGameIdPlayers(ctx echo.Context, gameId string) error {
-	// Implement your logic here
-	return ctx.JSON(http.StatusOK, api.Player{
-		Id:   ptrString("player-id"),
-		Name: ptrString("Player Name"),
-	})
+	return handlers.PostGamesGameIdPlayers(ctx, gameId, s.GameSessions)
+}
+
+// PostGamesGameIdStart starts the game session
+func (s *Server) PostGamesGameIdStart(ctx echo.Context, gameId string) error {
+	return handlers.PostGamesGameIdStart(ctx, gameId, s.GameSessions)
+}
+
+// GetGamesGameIdLeaderboard retrieves the leaderboard
+func (s *Server) GetGamesGameIdLeaderboard(ctx echo.Context, gameId string) error {
+	return handlers.GetGamesGameIdLeaderboard(ctx, gameId, s.GameSessions)
+}
+
+// PostGamesGameIdAnswers handles answer submission
+func (s *Server) PostGamesGameIdAnswers(ctx echo.Context, gameId string) error {
+	return handlers.PostGamesGameIdAnswers(ctx, gameId, s.GameSessions)
+}
+
+// GetGamesGameIdCurrentQuestion retrieves the current question
+func (s *Server) GetGamesGameIdCurrentQuestion(ctx echo.Context, gameId string) error {
+	return handlers.GetGamesGameIdCurrentQuestion(ctx, gameId, s.GameSessions)
 }
 
 func main() {
 	e := echo.New()
 
-	// Create an instance of your server
-	server := &Server{}
+	server := &Server{
+		GameSessions: make(map[string]*models.GameSession),
+	}
 
-	// Register the handlers from the generated code
+	// Register the handlers
 	api.RegisterHandlers(e, server)
 
 	// Start the server
 	if err := e.Start(":8080"); err != nil {
 		log.Fatal(err)
 	}
-}
-
-// Helper functions for pointer types
-func ptrString(s string) *string { return &s }
-func ptrGameSessionStatus(s api.GameSessionStatus) *api.GameSessionStatus {
-	return &s
 }

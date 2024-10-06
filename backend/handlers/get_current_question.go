@@ -2,12 +2,13 @@ package handlers
 
 import (
 	api "github.com/gmgale/quiz-game/backend/gen"
+	"github.com/gmgale/quiz-game/backend/models"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
 // GetGamesGameIdCurrentQuestion retrieves the current question
-func (s *Server) GetGamesGameIdCurrentQuestion(ctx echo.Context, gameId string) error {
+func GetGamesGameIdCurrentQuestion(ctx echo.Context, gameId string, gameSessions map[string]*models.GameSession) error {
 	gameSession, exists := gameSessions[gameId]
 	if !exists {
 		return ctx.JSON(http.StatusNotFound, "Game session not found")
@@ -20,9 +21,9 @@ func (s *Server) GetGamesGameIdCurrentQuestion(ctx echo.Context, gameId string) 
 	question := gameSession.CurrentQuestion
 
 	return ctx.JSON(http.StatusOK, api.Question{
-		Id:        &question.ID,
-		Text:      &question.Text,
+		Id:        ptrString(question.ID),
+		Text:      ptrString(question.Text),
 		Options:   &question.Options,
-		TimeLimit: &question.TimeLimit,
+		TimeLimit: ptrInt(question.TimeLimit),
 	})
 }

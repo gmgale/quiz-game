@@ -2,13 +2,14 @@ package handlers
 
 import (
 	api "github.com/gmgale/quiz-game/backend/gen"
+	"github.com/gmgale/quiz-game/backend/models"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"sort"
 )
 
 // GetGamesGameIdLeaderboard retrieves the leaderboard
-func (s *Server) GetGamesGameIdLeaderboard(ctx echo.Context, gameId string) error {
+func GetGamesGameIdLeaderboard(ctx echo.Context, gameId string, gameSessions map[string]*models.GameSession) error {
 	gameSession, exists := gameSessions[gameId]
 	if !exists {
 		return ctx.JSON(http.StatusNotFound, "Game session not found")
@@ -17,9 +18,9 @@ func (s *Server) GetGamesGameIdLeaderboard(ctx echo.Context, gameId string) erro
 	var leaderboard []api.LeaderboardEntry
 	for _, player := range gameSession.Players {
 		entry := api.LeaderboardEntry{
-			PlayerId: &player.ID,
-			Name:     &player.Name,
-			Score:    &player.Score,
+			PlayerId: ptrString(player.ID),
+			Name:     ptrString(player.Name),
+			Score:    ptrInt(player.Score),
 		}
 		leaderboard = append(leaderboard, entry)
 	}
