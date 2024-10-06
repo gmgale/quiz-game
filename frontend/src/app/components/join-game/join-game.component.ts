@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // FormsModule for ngModel two-way binding
-import { ApiService } from '../../services/api.service';
+import { DefaultService} from "../../gen";
 
 @Component({
   selector: 'app-join-game',
@@ -17,7 +17,7 @@ export class JoinGameComponent {
   errorMessage: string = '';
 
   constructor(
-    private apiService: ApiService,
+    private apiService: DefaultService,
     private router: Router,
     private route: ActivatedRoute)
   {}
@@ -35,9 +35,11 @@ export class JoinGameComponent {
     }
 
     // Join the game session
-    this.apiService.joinGame(this.gameCode, this.playerName).subscribe(
+    // @ts-ignore
+    this.apiService.gamesGameIdPlayersPost(this.gameCode, this.playerName).subscribe(
       (player) => {
         // Store player ID and game ID locally
+        // @ts-ignore
         localStorage.setItem('playerId', player.id);
         localStorage.setItem('gameId', this.gameCode);
 
