@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    working_dir: /app/backend
+    command: air
+
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      # Mount everything except node_modules to prevent overwriting it
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    command: npm start
