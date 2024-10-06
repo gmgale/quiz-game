@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import {NgForOf} from "@angular/common";
 
 @Component({
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.component.html',
+  standalone: true,
+  imports: [
+    NgForOf
+  ],
   styleUrls: ['./leaderboard.component.css']
 })
 export class LeaderboardComponent implements OnInit {
