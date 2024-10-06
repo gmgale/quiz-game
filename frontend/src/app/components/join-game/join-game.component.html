@@ -1,0 +1,15 @@
+<div class="join-game-container">
+  <h1>Join Quiz Game</h1>
+  <form (ngSubmit)="joinGame()" #joinGameForm="ngForm">
+    <div>
+      <label for="gameCode">Game Code:</label>
+      <input type="text" id="gameCode" [(ngModel)]="gameCode" name="gameCode" required />
+    </div>
+    <div>
+      <label for="playerName">Your Name:</label>
+      <input type="text" id="playerName" [(ngModel)]="playerName" name="playerName" required />
+    </div>
+    <button type="submit" [disabled]="joinGameForm.invalid">Join Game</button>
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  </form>
+</div>

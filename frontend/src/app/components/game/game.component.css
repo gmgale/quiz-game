@@ -1,0 +1,28 @@
+.game-container {
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.options button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  font-size: 1.1em;
+  cursor: pointer;
+}
+
+.options button.selected {
+  background-color: #d4edda;
+}
+
+.options button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,0 +1,16 @@
+<div class="leaderboard-container">
+  <h1>Game Over</h1>
+  <h2>Leaderboard</h2>
+  <table>
+    <tr>
+      <th>Rank</th>
+      <th>Player</th>
+      <th>Score</th>
+    </tr>
+    <tr *ngFor="let player of leaderboard; index as i">
+      <td>{{ i + 1 }}</td>
+      <td>{{ player.name }}</td>
+      <td>{{ player.score }}</td>
+    </tr>
+  </table>
+</div>

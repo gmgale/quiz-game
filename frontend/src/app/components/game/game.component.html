@@ -1,0 +1,19 @@
+<div class="game-container" *ngIf="currentQuestion">
+  <h2>Question:</h2>
+  <p>{{ currentQuestion.text }}</p>
+  <div class="options">
+    <button
+      *ngFor="let option of currentQuestion.options; index as i"
+      (click)="submitAnswer(i)"
+      [disabled]="optionsDisabled"
+      [class.selected]="isAnswered && i === currentQuestion.selectedOption"
+    >
+      {{ option }}
+    </button>
+  </div>
+  <p *ngIf="!optionsDisabled">Time Left: {{ timeLeft }} seconds</p>
+  <p *ngIf="showAnswerFeedback">{{ answerFeedback }}</p>
+</div>
+<div *ngIf="!currentQuestion">
+  <p>Waiting for the next question...</p>
+</div>
