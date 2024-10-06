@@ -15,6 +15,7 @@ type GameSession struct {
 	Questions            []*Question
 	Answers              map[string][]*Answer
 	CurrentQuestionIndex int
+	QuestionStartTime    time.Time
 }
 
 // Player represents a player in the game
@@ -47,4 +48,10 @@ type LeaderboardEntry struct {
 	PlayerID string
 	Name     string
 	Score    int
+}
+
+type Message struct {
+	GameID string      `json:"gameId"`
+	Type   string      `json:"type"`
+	Data   interface{} `json:"data"`
 }

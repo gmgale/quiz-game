@@ -5,6 +5,7 @@ import (
 	"github.com/gmgale/quiz-game/backend/models"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"time"
 )
 
 // PostGamesGameIdAnswers handles answer submission
@@ -17,6 +18,13 @@ func PostGamesGameIdAnswers(ctx echo.Context, gameId string, gameSessions map[st
 	gameSession, exists := gameSessions[gameId]
 	if !exists {
 		return ctx.JSON(http.StatusNotFound, "Game session not found")
+	}
+
+	currentQuestion := gameSession.CurrentQuestion
+	timeElapsed := time.Now().Sub(gameSession.QuestionStartTime).Seconds()
+
+	if timeElapsed > float64(currentQuestion.TimeLimit) {
+		return ctx.JSON(http.StatusBadRequest, "Time is up for this question")
 	}
 
 	player, playerExists := gameSession.Players[*answer.PlayerId]
@@ -34,7 +42,7 @@ func PostGamesGameIdAnswers(ctx echo.Context, gameId string, gameSessions map[st
 	gameSession.Answers[player.ID] = append(gameSession.Answers[player.ID], ans)
 
 	// Check if the answer is correct
-	currentQuestion := gameSession.CurrentQuestion
+	currentQuestion = gameSession.CurrentQuestion
 	correct := currentQuestion.Answer == ans.SelectedOption
 
 	// Calculate score (simple example: 10 points for correct answer)
