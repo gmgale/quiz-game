@@ -13,6 +13,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GameSession'
+
   /games/{gameId}/players:
     post:
       summary: Join a game session
@@ -38,6 +39,84 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Player'
+
+  /games/{gameId}/start:
+    post:
+      summary: Start the game
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Game started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameSession'
+
+  /games/{gameId}/current-question:
+    get:
+      summary: Get the current question
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current question
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+
+  /games/{gameId}/answers:
+    post:
+      summary: Submit an answer
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Answer submission
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Answer'
+      responses:
+        '200':
+          description: Answer received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswerResponse'
+
+  /games/{gameId}/leaderboard:
+    get:
+      summary: Get the leaderboard
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Leaderboard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeaderboardEntry'
+
 components:
   schemas:
     GameSession:
@@ -49,7 +128,7 @@ components:
           type: string
         status:
           type: string
-          enum: [ waiting, active, finished ]
+          enum: [waiting, active, finished]
         currentQuestionId:
           type: string
         startTime:
@@ -96,6 +175,16 @@ components:
         responseTime:
           type: integer
           description: Response time in milliseconds
+
+    AnswerResponse:
+      type: object
+      properties:
+        correct:
+          type: boolean
+        correctOption:
+          type: integer
+        scoreAwarded:
+          type: integer
 
     LeaderboardEntry:
       type: object

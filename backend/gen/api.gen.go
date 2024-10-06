@@ -19,6 +19,23 @@ const (
 	Waiting  GameSessionStatus = "waiting"
 )
 
+// Answer defines model for Answer.
+type Answer struct {
+	PlayerId   *string `json:"playerId,omitempty"`
+	QuestionId *string `json:"questionId,omitempty"`
+
+	// ResponseTime Response time in milliseconds
+	ResponseTime   *int `json:"responseTime,omitempty"`
+	SelectedOption *int `json:"selectedOption,omitempty"`
+}
+
+// AnswerResponse defines model for AnswerResponse.
+type AnswerResponse struct {
+	Correct       *bool `json:"correct,omitempty"`
+	CorrectOption *int  `json:"correctOption,omitempty"`
+	ScoreAwarded  *int  `json:"scoreAwarded,omitempty"`
+}
+
 // GameSession defines model for GameSession.
 type GameSession struct {
 	Code              *string            `json:"code,omitempty"`
@@ -31,6 +48,13 @@ type GameSession struct {
 // GameSessionStatus defines model for GameSession.Status.
 type GameSessionStatus string
 
+// LeaderboardEntry defines model for LeaderboardEntry.
+type LeaderboardEntry struct {
+	Name     *string `json:"name,omitempty"`
+	PlayerId *string `json:"playerId,omitempty"`
+	Score    *int    `json:"score,omitempty"`
+}
+
 // Player defines model for Player.
 type Player struct {
 	Id       *string    `json:"id,omitempty"`
@@ -39,10 +63,23 @@ type Player struct {
 	Score    *int       `json:"score,omitempty"`
 }
 
+// Question defines model for Question.
+type Question struct {
+	Id      *string   `json:"id,omitempty"`
+	Options *[]string `json:"options,omitempty"`
+	Text    *string   `json:"text,omitempty"`
+
+	// TimeLimit Time limit in seconds
+	TimeLimit *int `json:"timeLimit,omitempty"`
+}
+
 // PostGamesGameIdPlayersJSONBody defines parameters for PostGamesGameIdPlayers.
 type PostGamesGameIdPlayersJSONBody struct {
 	Name *string `json:"name,omitempty"`
 }
+
+// PostGamesGameIdAnswersJSONRequestBody defines body for PostGamesGameIdAnswers for application/json ContentType.
+type PostGamesGameIdAnswersJSONRequestBody = Answer
 
 // PostGamesGameIdPlayersJSONRequestBody defines body for PostGamesGameIdPlayers for application/json ContentType.
 type PostGamesGameIdPlayersJSONRequestBody PostGamesGameIdPlayersJSONBody
@@ -52,9 +89,21 @@ type ServerInterface interface {
 	// Create a new game session
 	// (POST /games)
 	PostGames(ctx echo.Context) error
+	// Submit an answer
+	// (POST /games/{gameId}/answers)
+	PostGamesGameIdAnswers(ctx echo.Context, gameId string) error
+	// Get the current question
+	// (GET /games/{gameId}/current-question)
+	GetGamesGameIdCurrentQuestion(ctx echo.Context, gameId string) error
+	// Get the leaderboard
+	// (GET /games/{gameId}/leaderboard)
+	GetGamesGameIdLeaderboard(ctx echo.Context, gameId string) error
 	// Join a game session
 	// (POST /games/{gameId}/players)
 	PostGamesGameIdPlayers(ctx echo.Context, gameId string) error
+	// Start the game
+	// (POST /games/{gameId}/start)
+	PostGamesGameIdStart(ctx echo.Context, gameId string) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -71,6 +120,54 @@ func (w *ServerInterfaceWrapper) PostGames(ctx echo.Context) error {
 	return err
 }
 
+// PostGamesGameIdAnswers converts echo context to params.
+func (w *ServerInterfaceWrapper) PostGamesGameIdAnswers(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "gameId" -------------
+	var gameId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "gameId", runtime.ParamLocationPath, ctx.Param("gameId"), &gameId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter gameId: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PostGamesGameIdAnswers(ctx, gameId)
+	return err
+}
+
+// GetGamesGameIdCurrentQuestion converts echo context to params.
+func (w *ServerInterfaceWrapper) GetGamesGameIdCurrentQuestion(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "gameId" -------------
+	var gameId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "gameId", runtime.ParamLocationPath, ctx.Param("gameId"), &gameId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter gameId: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetGamesGameIdCurrentQuestion(ctx, gameId)
+	return err
+}
+
+// GetGamesGameIdLeaderboard converts echo context to params.
+func (w *ServerInterfaceWrapper) GetGamesGameIdLeaderboard(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "gameId" -------------
+	var gameId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "gameId", runtime.ParamLocationPath, ctx.Param("gameId"), &gameId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter gameId: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetGamesGameIdLeaderboard(ctx, gameId)
+	return err
+}
+
 // PostGamesGameIdPlayers converts echo context to params.
 func (w *ServerInterfaceWrapper) PostGamesGameIdPlayers(ctx echo.Context) error {
 	var err error
@@ -84,6 +181,22 @@ func (w *ServerInterfaceWrapper) PostGamesGameIdPlayers(ctx echo.Context) error 
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.PostGamesGameIdPlayers(ctx, gameId)
+	return err
+}
+
+// PostGamesGameIdStart converts echo context to params.
+func (w *ServerInterfaceWrapper) PostGamesGameIdStart(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "gameId" -------------
+	var gameId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "gameId", runtime.ParamLocationPath, ctx.Param("gameId"), &gameId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter gameId: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PostGamesGameIdStart(ctx, gameId)
 	return err
 }
 
@@ -116,6 +229,10 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.POST(baseURL+"/games", wrapper.PostGames)
+	router.POST(baseURL+"/games/:gameId/answers", wrapper.PostGamesGameIdAnswers)
+	router.GET(baseURL+"/games/:gameId/current-question", wrapper.GetGamesGameIdCurrentQuestion)
+	router.GET(baseURL+"/games/:gameId/leaderboard", wrapper.GetGamesGameIdLeaderboard)
 	router.POST(baseURL+"/games/:gameId/players", wrapper.PostGamesGameIdPlayers)
+	router.POST(baseURL+"/games/:gameId/start", wrapper.PostGamesGameIdStart)
 
 }
