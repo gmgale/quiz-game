@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
 import {NgIf} from "@angular/common";
+import { DefaultService } from '../../gen';
 
 @Component({
   selector: 'app-create-game',
@@ -19,11 +19,15 @@ export class CreateGameComponent {
   gameCreated: boolean = false;
 
 
-  constructor(private apiService: ApiService, private router: Router) { }
+  constructor(private apiService: DefaultService, private router: Router) { }
 
   createGame() {
-    this.apiService.createGame().subscribe(
+    this.apiService.gamesPost().subscribe(
       (gameSession) => {
+        if (!gameSession.id) {
+          this.errorMessage = 'Failed to create a new game.';
+          return;
+        }
         this.gameId = gameSession.id;
         this.gameCreated = true;
       },
@@ -34,7 +38,7 @@ export class CreateGameComponent {
   }
 
   startGame() {
-    this.apiService.startGame(this.gameId).subscribe(
+    this.apiService.gamesGameIdStartPost(this.gameId).subscribe(
       (response) => {
         // Navigate to the game component for the host
         this.router.navigate(['/game', this.gameId]);
