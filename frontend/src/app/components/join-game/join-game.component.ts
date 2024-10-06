@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // FormsModule for ngModel two-way binding
 import { ApiService } from '../../services/api.service';
@@ -16,7 +16,17 @@ export class JoinGameComponent {
   playerName: string = '';
   errorMessage: string = '';
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(
+    private apiService: ApiService,
+    private router: Router,
+    private route: ActivatedRoute)
+  {}
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.gameCode = params['gameCode'] || '';
+    });
+  }
 
   joinGame() {
     if (!this.gameCode || !this.playerName) {
