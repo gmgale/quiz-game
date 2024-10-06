@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebsocketService } from '../../services/websocket.service';
 import { Subscription } from 'rxjs';
-import { ApiService } from '../../services/api.service';
+import { DefaultService } from '../../gen';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -26,7 +26,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   constructor(
     private websocketService: WebsocketService,
-    private apiService: ApiService,
+    private apiService: DefaultService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -88,12 +88,14 @@ export class GameComponent implements OnInit, OnDestroy {
     this.currentQuestion.selectedOption = optionIndex;
 
     if (this.gameId) {
-      this.apiService.submitAnswer(this.gameId, answer).subscribe(
+      // @ts-ignore
+      this.apiService.gamesGameIdAnswersPost(this.gameId, answer).subscribe(
         response => {
           if (response.correct) {
             this.answerFeedback = `Correct! You scored ${response.scoreAwarded} points.`;
           } else {
             const correctOptionIndex = response.correctOption;
+            // @ts-ignore
             const correctOptionText = this.currentQuestion.options[correctOptionIndex];
             this.answerFeedback = `Incorrect. The correct answer was: ${correctOptionText}`;
           }
