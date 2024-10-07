@@ -3,24 +3,24 @@ package handlers
 import (
 	api "github.com/gmgale/quiz-game/backend/gen"
 	"github.com/gmgale/quiz-game/backend/models"
-	"github.com/gmgale/quiz-game/backend/server"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"sync"
 	"time"
 )
 
 // PostGamesGameIdPlayers handles a player joining a game session
-func PostGamesGameIdPlayers(ctx echo.Context, gameId string, server *server.Server) error {
-	server.Mutex.Lock()
-	gameSession, exists := server.GameSessions[gameId]
-	server.Mutex.Unlock()
+func PostGamesGameIdPlayers(ctx echo.Context, gameId string, gameSessions map[string]*models.GameSession, mutex *sync.Mutex) error {
+	mutex.Lock()
+	gameSession, exists := gameSessions[gameId]
+	mutex.Unlock()
 	if !exists {
 		return ctx.JSON(http.StatusNotFound, "Game session not found")
 	}
 
-	server.Mutex.Lock()
-	defer server.Mutex.Unlock()
+	mutex.Lock()
+	defer mutex.Unlock()
 	var req struct {
 		Name string `json:"name"`
 	}
@@ -28,7 +28,7 @@ func PostGamesGameIdPlayers(ctx echo.Context, gameId string, server *server.Serv
 		return ctx.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	gameSession, exists = server.GameSessions[gameId]
+	gameSession, exists = gameSessions[gameId]
 	if !exists {
 		return ctx.JSON(http.StatusNotFound, "Game session not found")
 	}

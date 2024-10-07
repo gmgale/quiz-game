@@ -17,9 +17,8 @@ func (s *Server) PostGames(ctx echo.Context) error {
 	return handlers.PostGames(ctx, s.GameSessions)
 }
 
-// PostGamesGameIdPlayers handles a player joining a game session
 func (s *Server) PostGamesGameIdPlayers(ctx echo.Context, gameId string) error {
-	return handlers.PostGamesGameIdPlayers(ctx, gameId, s)
+	return handlers.PostGamesGameIdPlayers(ctx, gameId, s.GameSessions, &s.Mutex)
 }
 
 // PostGamesGameIdStart starts the game session

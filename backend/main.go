@@ -6,11 +6,19 @@ import (
 	"github.com/gmgale/quiz-game/backend/models"
 	gameServer "github.com/gmgale/quiz-game/backend/server"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"log"
 )
 
 func main() {
 	e := echo.New()
+
+	// CORS Middleware configuration
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:4200"},
+		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
 	server := &gameServer.Server{
 		GameSessions: make(map[string]*models.GameSession),
@@ -18,6 +26,9 @@ func main() {
 
 	// Register the handlers
 	api.RegisterHandlers(e, server)
+
+	// log any incoming requests
+	e.Use(middleware.Logger())
 
 	// Start the message handling goroutine
 	go handlers.HandleMessages()
