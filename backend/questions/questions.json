@@ -1,0 +1,20 @@
+[
+  {
+    "id": "q1",
+    "text": "What is 2 + 2?",
+    "options": ["1", "3", "4"],
+    "timeLimit": 10
+  },
+  {
+    "id": "q2",
+    "text": "What is the capital of France?",
+    "options": ["Berlin", "Madrid", "Paris"],
+    "timeLimit": 15
+  },
+  {
+    "id": "q3",
+    "text": "Which planet is known as the Red Planet?",
+    "options": ["Earth", "Mars", "Jupiter"],
+    "timeLimit": 12
+  }
+]
