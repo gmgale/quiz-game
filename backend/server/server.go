@@ -3,18 +3,32 @@ package server
 import (
 	"github.com/gmgale/quiz-game/backend/handlers"
 	"github.com/gmgale/quiz-game/backend/models"
+	"github.com/gmgale/quiz-game/backend/questions"
 	"github.com/labstack/echo/v4"
+	"log"
 	"sync"
 )
 
 type Server struct {
 	GameSessions map[string]*models.GameSession
 	Mutex        sync.Mutex
+	Questions    []questions.Question
+}
+
+func NewServer(questionsFile string) *Server {
+	loadedQuestions, err := questions.LoadQuestions(questionsFile)
+	if err != nil {
+		log.Fatalf("Failed to load questions: %v", err)
+	}
+	return &Server{
+		GameSessions: make(map[string]*models.GameSession),
+		Questions:    loadedQuestions,
+	}
 }
 
 // PostGames handles the creation of a new game session
 func (s *Server) PostGames(ctx echo.Context) error {
-	return handlers.PostGames(ctx, s.GameSessions)
+	return handlers.PostGames(ctx, s.GameSessions, s.Questions)
 }
 
 func (s *Server) PostGamesGameIdPlayers(ctx echo.Context, gameId string) error {

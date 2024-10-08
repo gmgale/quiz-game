@@ -3,7 +3,6 @@ package main
 import (
 	api "github.com/gmgale/quiz-game/backend/gen"
 	"github.com/gmgale/quiz-game/backend/handlers"
-	"github.com/gmgale/quiz-game/backend/models"
 	gameServer "github.com/gmgale/quiz-game/backend/server"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -13,16 +12,15 @@ import (
 func main() {
 	e := echo.New()
 
+	// Load the server with questions from "questions.json"
+	server := gameServer.NewServer("questions/questions.json")
+
 	// CORS Middleware configuration
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:4200"},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
-
-	server := &gameServer.Server{
-		GameSessions: make(map[string]*models.GameSession),
-	}
 
 	// Register the handlers
 	api.RegisterHandlers(e, server)
