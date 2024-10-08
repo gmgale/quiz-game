@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import {NgIf} from "@angular/common";
+import { NgIf } from "@angular/common";
 import { DefaultService } from '../../gen';
 
 @Component({
@@ -15,20 +15,21 @@ import { DefaultService } from '../../gen';
 
 export class CreateGameComponent {
   gameId: string = '';
+  gameCode: string = '';  // Add gameCode to store the code
   errorMessage: string = '';
   gameCreated: boolean = false;
-
 
   constructor(private apiService: DefaultService, private router: Router) { }
 
   createGame() {
     this.apiService.gamesPost().subscribe(
       (gameSession) => {
-        if (!gameSession.id) {
+        if (!gameSession.id || !gameSession.code) { // Check for both gameId and gameCode
           this.errorMessage = 'Failed to create a new game.';
           return;
         }
         this.gameId = gameSession.id;
+        this.gameCode = gameSession.code;
         this.gameCreated = true;
       },
       (error) => {

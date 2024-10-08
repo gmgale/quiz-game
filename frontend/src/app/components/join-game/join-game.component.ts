@@ -34,13 +34,14 @@ export class JoinGameComponent {
       return;
     }
 
-    // Join the game session
-    // @ts-ignore
-    this.apiService.gamesGameIdPlayersPost(this.gameCode, this.playerName).subscribe(
+    // Prepare the request body with both code and player name
+    const requestBody = { code: this.gameCode, name: this.playerName };
+
+    // Pass requestBody correctly in the API call
+    this.apiService.gamesGameIdPlayersPost(this.gameCode, requestBody).subscribe(
       (player) => {
         // Store player ID and game ID locally
-        // @ts-ignore
-        localStorage.setItem('playerId', player.id);
+        localStorage.setItem('playerId', <string>player.id);
         localStorage.setItem('gameId', this.gameCode);
 
         // Navigate to the game component

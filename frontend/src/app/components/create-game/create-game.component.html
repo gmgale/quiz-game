@@ -2,7 +2,7 @@
   <h1>Create a New Game</h1>
   <button *ngIf="!gameCreated" (click)="createGame()">Create Game</button>
   <div *ngIf="gameCreated">
-    <p>Game Created! Game Code: <strong>{{ gameId }}</strong></p>
+    <p>Game Created! Game Code: <strong>{{ gameCode }}</strong></p>  <!-- Display gameCode -->
     <p>Share this code with players.</p>
     <button (click)="startGame()">Start Game</button>
   </div>

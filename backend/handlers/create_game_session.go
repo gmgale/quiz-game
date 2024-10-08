@@ -6,6 +6,7 @@ import (
 	"github.com/gmgale/quiz-game/backend/questions"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"log"
 	"net/http"
 	"time"
 )
@@ -13,6 +14,12 @@ import (
 // PostGames creates a new game session
 func PostGames(ctx echo.Context, gameSessions map[string]*models.GameSession, loadedQuestions []questions.Question) error {
 	gameID := uuid.New().String()
+	// Generate a unique code for the game session
+	gameCode := uuid.New().String()[:6] // short code example, adjust as needed
+	log.Print("Generated game code: ", gameCode)
+
+	// Temporarily hardcoding the game code
+	gameCode = "123456"
 
 	// Convert loaded questions to models.Question type
 	var gameQuestions []*models.Question
@@ -28,6 +35,7 @@ func PostGames(ctx echo.Context, gameSessions map[string]*models.GameSession, lo
 
 	gameSessions[gameID] = &models.GameSession{
 		ID:        gameID,
+		Code:      gameCode, // Assign the generated code
 		Status:    "waiting",
 		Players:   make(map[string]*models.Player),
 		Answers:   make(map[string][]*models.Answer),
@@ -38,5 +46,6 @@ func PostGames(ctx echo.Context, gameSessions map[string]*models.GameSession, lo
 	return ctx.JSON(http.StatusCreated, api.GameSession{
 		Id:     ptrString(gameID),
 		Status: ptrGameSessionStatus(api.Waiting),
+		Code:   ptrString(gameCode), // Return the game code in the response
 	})
 }

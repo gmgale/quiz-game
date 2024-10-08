@@ -32,7 +32,11 @@ func (s *Server) PostGames(ctx echo.Context) error {
 }
 
 func (s *Server) PostGamesGameIdPlayers(ctx echo.Context, gameId string) error {
-	return handlers.PostGamesGameIdPlayers(ctx, gameId, s.GameSessions, &s.Mutex)
+	return handlers.PostGamesGameIdPlayers(ctx, s.GameSessions, &s.Mutex)
+}
+
+func (s *Server) PostGamesGameIdPlayersByID(ctx echo.Context, gameId string) error {
+	return s.PostGamesGameIdPlayers(ctx, gameId)
 }
 
 // PostGamesGameIdStart starts the game session

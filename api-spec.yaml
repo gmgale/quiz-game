@@ -22,12 +22,7 @@ paths:
   /games/{gameId}/players:
     post:
       summary: Join a game session
-      parameters:
-        - name: gameId
-          in: path
-          required: true
-          schema:
-            type: string
+      parameters: []
       requestBody:
         description: Player information
         required: true
@@ -35,6 +30,8 @@ paths:
           application/json:
             schema:
               properties:
+                code:
+                  type: string
                 name:
                   type: string
       responses:
