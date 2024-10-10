@@ -32,7 +32,7 @@ func main() {
 	go handlers.HandleMessages()
 
 	// Register the WebSocket endpoint
-	e.GET("/ws/:gameId", handlers.WebSocketHandler(server.GameSessions))
+	e.GET("/ws/:gameCode", handlers.WebSocketHandler(server.GameSessions))
 
 	// Start the server
 	if err := e.Start(":8080"); err != nil {

@@ -4,9 +4,11 @@ import (
 	"github.com/gmgale/quiz-game/backend/handlers"
 	"github.com/gmgale/quiz-game/backend/models"
 	"github.com/gmgale/quiz-game/backend/questions"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"log"
 	"sync"
+	"time"
 )
 
 type Server struct {
@@ -20,8 +22,37 @@ func NewServer(questionsFile string) *Server {
 	if err != nil {
 		log.Fatalf("Failed to load questions: %v", err)
 	}
+
+	// Create a default game session
+	defaultGameID := uuid.New().String()
+	defaultGameCode := "123456" // Use a fixed code for testing
+
+	var gameQuestions []*models.Question
+	for _, q := range loadedQuestions {
+		gameQuestions = append(gameQuestions, &models.Question{
+			ID:        q.ID,
+			Text:      q.Text,
+			Options:   q.Options,
+			TimeLimit: q.TimeLimit,
+			Answer:    -1, // Placeholder
+		})
+	}
+
+	defaultGameSession := &models.GameSession{
+		ID:        defaultGameID,
+		Code:      defaultGameCode,
+		Status:    "waiting",
+		Players:   make(map[string]*models.Player),
+		Answers:   make(map[string][]*models.Answer),
+		Questions: gameQuestions,
+		StartTime: time.Time{},
+	}
+
+	gameSessions := make(map[string]*models.GameSession)
+	gameSessions[defaultGameID] = defaultGameSession
+
 	return &Server{
-		GameSessions: make(map[string]*models.GameSession),
+		GameSessions: gameSessions,
 		Questions:    loadedQuestions,
 	}
 }

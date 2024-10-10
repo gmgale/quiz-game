@@ -18,9 +18,6 @@ func PostGames(ctx echo.Context, gameSessions map[string]*models.GameSession, lo
 	gameCode := uuid.New().String()[:6] // short code example, adjust as needed
 	log.Print("Generated game code: ", gameCode)
 
-	// Temporarily hardcoding the game code
-	gameCode = "123456"
-
 	// Convert loaded questions to models.Question type
 	var gameQuestions []*models.Question
 	for _, q := range loadedQuestions {
@@ -35,7 +32,7 @@ func PostGames(ctx echo.Context, gameSessions map[string]*models.GameSession, lo
 
 	gameSessions[gameID] = &models.GameSession{
 		ID:        gameID,
-		Code:      gameCode, // Assign the generated code
+		Code:      gameCode,
 		Status:    "waiting",
 		Players:   make(map[string]*models.Player),
 		Answers:   make(map[string][]*models.Answer),
@@ -46,6 +43,6 @@ func PostGames(ctx echo.Context, gameSessions map[string]*models.GameSession, lo
 	return ctx.JSON(http.StatusCreated, api.GameSession{
 		Id:     ptrString(gameID),
 		Status: ptrGameSessionStatus(api.Waiting),
-		Code:   ptrString(gameCode), // Return the game code in the response
+		Code:   ptrString(gameCode),
 	})
 }

@@ -4,11 +4,14 @@ import (
 	api "github.com/gmgale/quiz-game/backend/gen"
 	"github.com/gmgale/quiz-game/backend/models"
 	"github.com/labstack/echo/v4"
+	"log"
 	"net/http"
 	"time"
 )
 
 func PostGamesGameIdStart(ctx echo.Context, gameId string, gameSessions map[string]*models.GameSession) error {
+	log.Print("Starting game session: ", gameId)
+	log.Println("Game sessions: ", gameSessions)
 	gameSession, exists := gameSessions[gameId]
 	if !exists {
 		return ctx.JSON(http.StatusNotFound, "Game session not found")

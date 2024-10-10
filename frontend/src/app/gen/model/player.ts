@@ -15,5 +15,6 @@ export interface Player {
     name?: string;
     score?: number;
     joinedAt?: string;
+    gameId?: string;
 }
 

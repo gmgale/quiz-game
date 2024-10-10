@@ -57,6 +57,7 @@ type LeaderboardEntry struct {
 
 // Player defines model for Player.
 type Player struct {
+	GameId   *string    `json:"gameId,omitempty"`
 	Id       *string    `json:"id,omitempty"`
 	JoinedAt *time.Time `json:"joinedAt,omitempty"`
 	Name     *string    `json:"name,omitempty"`
@@ -75,6 +76,7 @@ type Question struct {
 
 // PostGamesGameIdPlayersJSONBody defines parameters for PostGamesGameIdPlayers.
 type PostGamesGameIdPlayersJSONBody struct {
+	Code *string `json:"code,omitempty"`
 	Name *string `json:"name,omitempty"`
 }
 

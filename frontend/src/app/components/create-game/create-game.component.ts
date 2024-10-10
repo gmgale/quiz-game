@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgIf } from "@angular/common";
-import { DefaultService } from '../../gen';
+import {DefaultService, GameSession} from '../../gen';
 
 @Component({
   selector: 'app-create-game',
@@ -22,8 +22,8 @@ export class CreateGameComponent {
   constructor(private apiService: DefaultService, private router: Router) { }
 
   createGame() {
-    this.apiService.gamesPost().subscribe(
-      (gameSession) => {
+    this.apiService.gamesPost().subscribe({
+      next: (gameSession: GameSession) => {
         if (!gameSession.id || !gameSession.code) { // Check for both gameId and gameCode
           this.errorMessage = 'Failed to create a new game.';
           return;
@@ -32,21 +32,30 @@ export class CreateGameComponent {
         this.gameCode = gameSession.code;
         this.gameCreated = true;
       },
-      (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to create a new game.';
+        console.error('Create Game Error:', error);
+      },
+      complete: () => {
+        console.log('Create game request completed.');
       }
-    );
+    });
   }
 
   startGame() {
-    this.apiService.gamesGameIdStartPost(this.gameId).subscribe(
-      (response) => {
+    this.apiService.gamesGameIdStartPost(this.gameId).subscribe({
+      next: (response: any) => {
         // Navigate to the game component for the host
         this.router.navigate(['/game', this.gameId]);
       },
-      (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to start the game.';
+        console.error('Start Game Error:', error);
+      },
+      complete: () => {
+        console.log('Start game request completed.');
       }
-    );
+    });
   }
+
 }

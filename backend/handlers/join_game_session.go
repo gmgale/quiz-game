@@ -28,12 +28,15 @@ func PostGamesGameIdPlayers(ctx echo.Context, gameSessions map[string]*models.Ga
 	var gameSession *models.GameSession
 	mutex.Lock()
 	for _, session := range gameSessions {
+		log.Printf("session.Code: %s, req.Code: %s", session.Code, req.Code)
 		if session.Code == req.Code {
 			gameSession = session
 			break
 		}
 	}
 	mutex.Unlock()
+
+	log.Printf("Game session found: %v", gameSession)
 
 	if gameSession == nil {
 		return ctx.JSON(http.StatusNotFound, "Game session not found")
@@ -51,10 +54,13 @@ func PostGamesGameIdPlayers(ctx echo.Context, gameSessions map[string]*models.Ga
 	gameSession.Players[playerID] = player
 	mutex.Unlock()
 
+	log.Printf("Player %s joined game session %s", playerID, gameSession.ID)
+
 	return ctx.JSON(http.StatusOK, api.Player{
 		Id:       ptrString(player.ID),
 		Name:     ptrString(player.Name),
 		Score:    ptrInt(player.Score),
 		JoinedAt: ptrTime(player.JoinedAt),
+		GameId:   ptrString(gameSession.ID),
 	})
 }

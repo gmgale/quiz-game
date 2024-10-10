@@ -51,7 +51,8 @@ type LeaderboardEntry struct {
 }
 
 type Message struct {
-	GameID string      `json:"gameId"`
-	Type   string      `json:"type"`
-	Data   interface{} `json:"data"`
+	GameID   string      `json:"gameId"`
+	GameCode string      `json:"gameCode"`
+	Type     string      `json:"type"`
+	Data     interface{} `json:"data"`
 }
